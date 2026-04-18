@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  backend:
+    build: .
+    container_name: rate-limiter-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      - ENV=production
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    depends_on:
+      - redis
+      - mongo
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    restart: always
+
+  mongo:
+    image: mongo:7-jammy
+    container_name: mongo-server
+    ports:
+      - "27017:27017"
+    restart: always

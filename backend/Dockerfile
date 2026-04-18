@@ -1,4 +1,4 @@
-from node:24
+from node:24-alpine
 
 WORKDIR /src
 
