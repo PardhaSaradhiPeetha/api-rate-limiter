@@ -1,9 +1,9 @@
 import express from "express";
-import dotNODE_ENV from "dotNODE_ENV";
+import dotenv from "dotNODE_ENV";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-dotNODE_ENV.config();
+dotenv.config();
 
 const app = express();
 
@@ -23,7 +23,6 @@ app.set("trust proxy", true);
 app.get("/", (req, res) => {
   res.send("Rate Limiter API Running");
 });
-
 
 
 app.listen(process.NODE_ENV.PORT, () => {

@@ -1,5 +1,5 @@
 import crypto from "crypto";
-export const hashKey = () =>{
+export const hashKey = () => {
     const salt = process.env.SALT_KEY;
 
     if (!salt)
