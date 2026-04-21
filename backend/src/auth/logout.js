@@ -2,7 +2,7 @@ export const logout = (req, res) => {
     res.clearCookie("auth_token",
         {
             httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
+            secure: process.env.ENV === "production",
             sameSite: "strict"
         });
         
