@@ -1,15 +1,15 @@
-import Developer from "../models/developer.model.js";
-import hashKey from "../utils/hashKey.js";
+import { Developer } from "../models/developer.model.js";
+import { hashKey } from "../utils/hashKey.js";
 import { applyRateLimit } from "../core/rateLimiter.js";
 
 export const checkLimit = async (req, res) => {
     try {
         const apiKey = req.headers['x-api-key'];
-        const { endUserId, reqCost } = req.body;
-        const endUserIp = req.headers['x-forwarded-ip']?.split(",")[0] || req.ip;
+        const ip = req.headers['x-forwarded-ip']?.split(",")[0] || req.ip;
+        const reqCost = req.body;
 
-        if (!apiKey || !endUserId) {
-            return res.status(400).json({ error: "api key and endUserId required" });
+        if (!apiKey) {
+            return res.status(400).json({ error: "api key required" });
         }
 
         const hashedApiKey = hashKey(apiKey);
@@ -22,10 +22,10 @@ export const checkLimit = async (req, res) => {
         }
 
         const apiKeyData = dev.apiKeys.find(
-            (k) => (keyHashed === hashedApiKey)
+            (k) => (k.keyHash === hashedApiKey)
         );
 
-        const result = await applyRateLimit(apiKeyData, endUserId, endUserIp, reqCost);
+        const result = await applyRateLimit(apiKeyData, reqCost, ip);
         return res.status(result.allowed ? 200 : 429).json(result);
 
     } catch (err) {

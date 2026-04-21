@@ -1,4 +1,4 @@
-import Developer from "../models/developer.model.js";
+import { Developer } from "../models/developer.model.js";
 import bcrypt from "bcrypt";
 import { generateJWToken } from "../utils/token.js";
 

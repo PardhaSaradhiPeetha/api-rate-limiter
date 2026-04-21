@@ -1,13 +1,15 @@
 
-const TIME_WINDOW = 60; //seconds
-
 const PLAN_LIMITS = {
     free: {
-        capacity:7,
-        maxCost: 3 
+        maxApiKeys:5,
+        capacity:50,
+        timeWindow:60,
+        maxCost: 5 
     },
     paid: {
-        capacity: 15,
+        maxApiKeys:10,
+        capacity: 100,
+        timeWindow:60,
         maxCost: 10
     }
 }
@@ -16,8 +18,9 @@ export const getLimits = (plan) => {
     const config = PLAN_LIMITS[plan] || PLAN_LIMITS["free"];
 
     return {
+        maxApiKeys: config.maxApiKeys,
         capacity: config.capacity,
-        refillRate: config.capacity/TIME_WINDOW,
+        refillRate: config.capacity/config.timeWindow,
         maxCost: config.maxCost
     }
 };

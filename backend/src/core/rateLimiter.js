@@ -1,7 +1,7 @@
-import tokenBucket from "./tokenBucketAlgorithm.js";
-import getLimits from "./PlanLimitProvider.js";
+import { tokenBucket } from "./tokenBucketAlgorithm.js";
+import { getLimits } from "./PlanLimitProvider.js";
 
-export const applyRateLimit = async (apiKeyData, endUserId, endUserIp, requestedCost) =>{
+export const applyRateLimit = async (apiKeyData, requestedCost, ip) =>{
     if(!apiKeyData.active){
         return{
             allowed: false,
@@ -21,14 +21,12 @@ export const applyRateLimit = async (apiKeyData, endUserId, endUserIp, requested
         cost = maxCost;
     }
 
-    const key = `bucket:${apiKeyData.hashKey}:${endUserId}:${endUserIp}`;
+    const key = `bucket:${apiKeyData.keyHash}:${ip}`;
 
     const result = await tokenBucket(key,capacity,refillRate,cost);
 
     return{
-        ...result,
-        ...warning
+        ...result,warning
     }
-
 
 };

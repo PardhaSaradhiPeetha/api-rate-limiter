@@ -1,8 +1,8 @@
 import { useState } from "react";
-import RefreshIcon from './assets/refresh.svg';
+import RefreshIcon from '../assets/refresh.svg';
 
-import Card from './Card';
-import TrafficGraph from "./TrafficGraph";
+import Card from './Card.jsx';
+import TrafficGraph from "./TrafficGraph.jsx";
 
 function Dashboard() {
   const [stats] = useState({

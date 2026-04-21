@@ -1,12 +1,9 @@
-
-End User → Developer API → Your Rate Limiter → Redis
-                                      ↓
-                                 Your Dashboard
+Developer → calls your API → you apply token bucket → allow/block
 
 Request → routes → controllers → core → models/config → response
 
 
-endUser → rate limit → allow/block
+request → rate limit → allow/block
 
 --------------------------------------
 Client (developer API call)

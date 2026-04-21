@@ -2,20 +2,9 @@ import mongoose from "mongoose";
 
 const requestLogSchema = new mongoose.Schema({
   apiKey: String,
-  userId: String,
   ip: String,
-  
-  status: {
-    type: String,
-    enum: ["allowed", "blocked"]
-  },
+  allowed: Boolean,
+  cost: Number,
+}, { timestamps: true });
 
-  error: String,
-
-  createdAt: {
-    type: Date,
-    default: Date.now
-  }
-});
-
-export default mongoose.model("RequestLog", requestLogSchema);
+export const RequestLog = mongoose.model("RequestLog", requestLogSchema);

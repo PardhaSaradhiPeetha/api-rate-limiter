@@ -1,5 +1,5 @@
 import { generateApiKey } from "../utils/generateApiKey.js";
-import Developer from "../models/developer.model.js"
+import { Developer } from "../models/developer.model.js"
 
 export const apiKeyController = async (req, res) => {
     try {
@@ -8,7 +8,7 @@ export const apiKeyController = async (req, res) => {
             req.user.id,
             {
                 $push: {
-                    apiKeys : {
+                    apiKeys: {
                         keyHash: hashKey,
                         name: req.body.name,
                         createdAt: new Date(),
@@ -19,8 +19,8 @@ export const apiKeyController = async (req, res) => {
             }
         );
 
-        if(!isUpdated)
-            return res.status(404).json({message: "Developer Not found"});
+        if (!isUpdated)
+            return res.status(404).json({ message: "Developer Not found" });
 
         res.status(201).json(
             {
