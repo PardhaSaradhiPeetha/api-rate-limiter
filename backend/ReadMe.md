@@ -2,7 +2,6 @@ Developer → calls your API → you apply token bucket → allow/block
 
 Request → routes → controllers → core → models/config → response
 
-
 request → rate limit → allow/block
 
 --------------------------------------

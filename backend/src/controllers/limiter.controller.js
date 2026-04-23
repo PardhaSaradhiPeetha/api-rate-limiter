@@ -1,6 +1,7 @@
 import { Developer } from "../models/developer.model.js";
 import { hashKey } from "../utils/hashKey.js";
 import { applyRateLimit } from "../core/rateLimiter.js";
+import { RequestLog } from "../models/RequestLog.model.js";
 
 export const checkLimit = async (req, res) => {
     try {
@@ -28,6 +29,13 @@ export const checkLimit = async (req, res) => {
         const result = await applyRateLimit(apiKeyData, reqCost, ip);
         return res.status(result.allowed ? 200 : 429).json(result);
 
+        await RequestLog.create({
+            apiKeyHash: apiKeyData.keyHash,
+            ip: req.ip,
+            allowed: result.allowed,
+            cost: reqCost ?? 1
+        })
+        
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Internal server error" });

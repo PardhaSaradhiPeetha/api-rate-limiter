@@ -3,11 +3,6 @@ import mongoose from "mongoose";
 const apiKeySchema = new mongoose.Schema({
   keyHash: { type: String, required: true },
   name: { type: String, required: true, trim: true },
-  plan: {
-    type: String,
-    enum: ["free", "paid"],
-    default: "free"
-  },
   active: { type: Boolean, default: true }
 },{timestamps:true});
 

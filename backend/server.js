@@ -2,7 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import limiterRoute from "./src/routes/limiter.route.js"
+import limiterRoute from "./src/routes/limiter.route.js";
+import dashboardRoute from "./src/routes/dashboard.route.js";
 
 dotenv.config();
 
@@ -24,7 +25,8 @@ app.get("/", (req, res) => {
   res.send("Rate Limiter API Running");
 });
 
-app.use("/api",limiterRoute);
+app.use("/api", limiterRoute);
+app.use("/api", dashboardRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);

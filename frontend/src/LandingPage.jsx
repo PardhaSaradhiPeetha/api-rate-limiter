@@ -29,13 +29,6 @@ export default function Landing() {
           >
             Get Started
           </a>
-
-          <a
-            href="#developer"
-            className="border border-gray-500 px-6 py-3 rounded-lg hover:border-white transition"
-          >
-            View Docs
-          </a>
         </div>
       </div>
 
@@ -116,27 +109,6 @@ export default function Landing() {
   }
 });`}
 </pre>
-        </div>
-      </div>
-
-      {/* PRICING */}
-      <div className="text-center mt-32 px-6">
-        <h2 className="text-3xl font-bold">Pricing</h2>
-
-        <div className="flex flex-col md:flex-row justify-center gap-8 mt-12">
-
-          <div className="bg-white/5 p-6 rounded-xl w-64 border border-white/10">
-            <h3 className="text-xl font-semibold">Free</h3>
-            <p className="mt-3 text-gray-400 text-sm">5 API Keys</p>
-            <p className="text-gray-400 text-sm">50 req/min</p>
-          </div>
-
-          <div className="bg-white/5 border-2 border-blue-500 p-6 rounded-xl w-64">
-            <h3 className="text-xl font-semibold">Pro</h3>
-            <p className="mt-3 text-gray-400 text-sm">10 API Keys</p>
-            <p className="text-gray-400 text-sm">100 req/min</p>
-          </div>
-
         </div>
       </div>
 
