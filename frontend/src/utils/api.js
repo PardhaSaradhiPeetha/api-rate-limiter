@@ -1,4 +1,9 @@
-const rawApiBaseUrl = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+const rawApiBaseUrl = import.meta.env.VITE_API_URL;
+
+if (!rawApiBaseUrl) {
+    throw new Error("Missing VITE_API_URL in frontend/.env");
+}
+
 const API_BASE_URL = rawApiBaseUrl.replace(/\/?api\/?$/i, "").replace(/\/$/, "");
 
 export const apiUrl = (path) => `${API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
@@ -9,7 +14,6 @@ export async function apiFetch(path, options = {}) {
         ...(options.headers || {})
     };
 
-    // Add Authorization header with token if available
     const token = localStorage.getItem("token");
     if (token) {
         headers.Authorization = `Bearer ${token}`;

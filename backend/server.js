@@ -11,7 +11,7 @@ import developerRoute from "./src/routes/developer.route.js";
 dotenv.config();
 
 const app = express();
-const allowedOrigins = [process.env.FRONTEND_URI, "http://localhost:5173", "http://127.0.0.1:5173", "https://api-rate-limiter-9yzk.onrender.com"].filter(Boolean);
+const allowedOrigins = [process.env.FRONTEND_URI, "http://localhost:5173", "http://127.0.0.1:5173"].filter(Boolean);
 
 app.use(cors(
   {
