@@ -6,8 +6,9 @@ import { RequestLog } from "../models/RequestLog.model.js";
 export const checkLimit = async (req, res) => {
     try {
         const apiKey = req.headers['x-api-key'];
-        const ip = req.headers['x-forwarded-ip']?.split(",")[0] || req.ip;
-        const reqCost = req.body;
+        const ip = req.headers['x-forwarded-for']?.split(",")[0] || req.ip;
+        const { reqCost } = req.body;
+        const requestedCost = Number(reqCost);
 
         if (!apiKey) {
             return res.status(400).json({ error: "api key required" });
@@ -26,16 +27,22 @@ export const checkLimit = async (req, res) => {
             (k) => (k.keyHash === hashedApiKey)
         );
 
-        const result = await applyRateLimit(apiKeyData, reqCost, ip);
-        return res.status(result.allowed ? 200 : 429).json(result);
+        const result = await applyRateLimit(
+            apiKeyData,
+            Number.isFinite(requestedCost) ? requestedCost : 1,
+            ip
+        );
 
         await RequestLog.create({
             apiKeyHash: apiKeyData.keyHash,
-            ip: req.ip,
+            developerId: dev._id,
+            ip,
             allowed: result.allowed,
-            cost: reqCost ?? 1
-        })
-        
+            cost: Number.isFinite(requestedCost) ? requestedCost : 1
+        }).catch(console.error);
+
+        return res.status(result.allowed ? 200 : 429).json(result);
+
     } catch (err) {
         console.error(err);
         return res.status(500).json({ error: "Internal server error" });

@@ -3,8 +3,9 @@ export const logout = (req, res) => {
         {
             httpOnly: true,
             secure: process.env.ENV === "production",
-            sameSite: "strict"
+            sameSite: process.env.ENV === "production" ? "none" : "lax",
+            path: "/"
         });
-        
+
     return res.status(200).json({ message: "Logout Successfull" });
 }

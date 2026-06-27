@@ -10,6 +10,7 @@ services:
       - ENV=production
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - MONGO_URI=mongodb://mongo:27017/api-rate-limiter
     depends_on:
       - redis
       - mongo

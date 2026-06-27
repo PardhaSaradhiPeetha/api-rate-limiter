@@ -1,10 +1,15 @@
 import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { apiFetch } from "./utils/api.js";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -13,10 +18,27 @@ export default function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Login Data:", form);
-    // later: send to backend
+    setLoading(true);
+    setError("");
+
+    try {
+      const data = await apiFetch("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify(form)
+      });
+
+      if (data?.token) {
+        localStorage.setItem("token", data.token);
+      }
+
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Unable to login");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -27,6 +49,12 @@ export default function Login() {
         <h2 className="text-3xl font-bold text-center mb-6">
           Welcome Back
         </h2>
+
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -55,18 +83,19 @@ export default function Login() {
           {/* Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 transition p-3 rounded font-semibold"
+            disabled={loading}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-60 transition p-3 rounded font-semibold"
           >
-            Login
+            {loading ? "Signing in..." : "Login"}
           </button>
         </form>
 
         {/* Footer */}
         <p className="text-center text-gray-400 mt-4">
           Don’t have an account?{" "}
-          <span className="text-blue-400 cursor-pointer">
+          <Link to="/signup" className="text-blue-400 cursor-pointer">
             Sign Up
-          </span>
+          </Link>
         </p>
 
       </div>

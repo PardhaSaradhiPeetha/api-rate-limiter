@@ -1,11 +1,16 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { apiFetch } from "./utils/api.js";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: ""
   });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({
@@ -14,10 +19,23 @@ export default function Signup() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Signup Data:", form);
-    // later: send to backend
+    setLoading(true);
+    setError("");
+
+    try {
+      await apiFetch("/api/auth/register", {
+        method: "POST",
+        body: JSON.stringify(form)
+      });
+
+      navigate("/login");
+    } catch (err) {
+      setError(err.message || "Unable to register");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,6 +46,12 @@ export default function Signup() {
         <h2 className="text-3xl font-bold text-center mb-6">
           Create Account
         </h2>
+
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
 
@@ -67,18 +91,19 @@ export default function Signup() {
           {/* Button */}
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 transition p-3 rounded font-semibold"
+            disabled={loading}
+            className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-60 transition p-3 rounded font-semibold"
           >
-            Sign Up
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
         {/* Footer */}
         <p className="text-center text-gray-400 mt-4">
           Already have an account?{" "}
-          <span className="text-blue-400 cursor-pointer">
+          <Link to="/login" className="text-blue-400 cursor-pointer">
             Login
-          </span>
+          </Link>
         </p>
       </div>
     </div>

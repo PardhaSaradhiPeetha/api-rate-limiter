@@ -1,13 +1,15 @@
 import { Developer } from "../models/developer.model.js";
 import bcrypt from "bcrypt";
 
-export const register = async (req, res) => {
+export const signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        
-        if(Developer.findOne({email: email})){
-            return res.json({
-                message: " Account aleardy exists"
+
+        const existingDeveloper = await Developer.findOne({ email });
+
+        if (existingDeveloper) {
+            return res.status(409).json({
+                error: "Account already exists"
             });
         }
 
@@ -19,7 +21,7 @@ export const register = async (req, res) => {
             password: hashedPassword
         });
 
-        res.status(200).json({ message: "Registered Successfully" });
+        res.status(201).json({ message: "Registered Successfully" });
     } catch (err) {
         res.status(500).json({ error: "Register failed" });
     }

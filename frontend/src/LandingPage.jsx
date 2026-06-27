@@ -2,18 +2,9 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
-      {/* NAVBAR */}
-      <nav className="flex justify-between items-center px-8 py-5 border-b border-white/10">
-        <h2 className="text-xl font-bold tracking-wide">RateLimiter</h2>
-        <div className="space-x-6 text-sm">
-          <a href="/login" className="hover:text-blue-400">Login</a>
-          <a href="/signup" className="hover:text-blue-400">Sign Up</a>
-        </div>
-      </nav>
-
       {/* HERO */}
-      <div className="text-center mt-24 px-4 max-w-3xl mx-auto">
-        <h1 className="text-5xl font-bold leading-tight">
+      <div className="text-center px-4 max-w-3xl mx-auto">
+        <h1 className="text-5xl pt-3 font-bold leading-tight">
           Protect & Control Your API Traffic
         </h1>
 
@@ -89,8 +80,8 @@ export default function Landing() {
 
         {/* CODE */}
         <div className="mt-10 bg-black/60 border border-white/10 p-5 rounded-xl text-sm overflow-x-auto">
-<pre>
-{`fetch("https://api.yourdomain.com/v1/check", {
+          <pre>
+            {`fetch("https://api.yourdomain.com/v1/check", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
@@ -108,7 +99,7 @@ export default function Landing() {
     // reject or queue
   }
 });`}
-</pre>
+          </pre>
         </div>
       </div>
 
