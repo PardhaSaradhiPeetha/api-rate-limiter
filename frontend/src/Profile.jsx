@@ -9,6 +9,31 @@ export default function Profile() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [revealedKeys, setRevealedKeys] = useState({});
+  const [copiedKeyId, setCopiedKeyId] = useState("");
+
+  const maskKey = (value) => {
+    if (!value) return "Unavailable for keys created before this update";
+
+    return "•".repeat(Math.min(value.length, 32));
+  };
+
+  const toggleRevealKey = (id) => {
+    setRevealedKeys((keys) => ({
+      ...keys,
+      [id]: !keys[id]
+    }));
+  };
+
+  const copyApiKey = async (value, id) => {
+    if (!value) return;
+
+    await navigator.clipboard.writeText(value);
+    setCopiedKeyId(id);
+    setTimeout(() => {
+      setCopiedKeyId((currentId) => currentId === id ? "" : currentId);
+    }, 1600);
+  };
 
   const loadProfile = async () => {
     setLoading(true);
@@ -46,6 +71,11 @@ export default function Profile() {
       setNewKey(data.apiKey);
       setKeyName("");
       setApiKeys((keys) => [...keys, data.key]);
+      setRevealedKeys((keys) => ({
+        ...keys,
+        "new-key": true,
+        [data.key.id]: true
+      }));
     } catch (err) {
       setError(err.message || "Unable to generate key");
     } finally {
@@ -125,16 +155,29 @@ export default function Profile() {
 
         {newKey && (
           <div className="mt-5 bg-black/60 border border-white/10 p-4 rounded-lg">
-            <p className="text-sm text-gray-400">
-              Copy your API key now (it won't be shown again)
-            </p>
-            <div className="flex justify-between items-center mt-2">
-              <p className="font-mono break-all text-sm">{newKey}</p>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <h3 className="text-sm font-semibold">API Key</h3>
+                <p className="text-sm text-gray-400">
+                  Copy your API key now or find it in your keys list below.
+                </p>
+              </div>
               <button
-                onClick={() => navigator.clipboard.writeText(newKey)}
-                className="text-xs bg-gray-700 px-3 py-1 rounded-md hover:bg-gray-600"
+                onClick={() => toggleRevealKey("new-key")}
+                className="shrink-0 rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium hover:bg-gray-600"
               >
-                Copy
+                {revealedKeys["new-key"] ? "Hide" : "Show"}
+              </button>
+            </div>
+            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="min-w-0 font-mono break-all text-sm">
+                {revealedKeys["new-key"] ? newKey : maskKey(newKey)}
+              </p>
+              <button
+                onClick={() => copyApiKey(newKey, "new-key")}
+                className="shrink-0 rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium hover:bg-gray-600"
+              >
+                {copiedKeyId === "new-key" ? "Copied" : "Copy"}
               </button>
             </div>
           </div>
@@ -149,33 +192,61 @@ export default function Profile() {
           {apiKeys.map((key) => (
             <div
               key={key.id}
-              className="flex justify-between items-center bg-black/40 p-4 rounded-xl border border-white/5"
+              className="bg-black/40 p-4 rounded-xl border border-white/5"
             >
-              <div>
-                <p className="font-semibold">{key.name}</p>
-                <p className="text-gray-400 text-sm font-mono">
-                  Created {key.createdAt ? new Date(key.createdAt).toLocaleString() : "recently"}
-                </p>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                <div className="min-w-0">
+                  <p className="font-semibold">{key.name}</p>
+                  <p className="text-gray-400 text-sm font-mono">
+                    Created {key.createdAt ? new Date(key.createdAt).toLocaleString() : "recently"}
+                  </p>
+                </div>
+
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    onClick={() => toggleKey(key)}
+                    className={`px-3 py-1.5 rounded-lg text-xs ${
+                      key.active
+                        ? "bg-green-600 hover:bg-green-700"
+                        : "bg-red-600 hover:bg-red-700"
+                    }`}
+                  >
+                    {key.active ? "Active" : "Deactivated"}
+                  </button>
+
+                  <button
+                    onClick={() => deleteKey(key.id)}
+                    className="px-3 py-1.5 rounded-lg text-xs bg-gray-700 hover:bg-gray-800"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
 
-              <div className="flex gap-2">
-                <button
-                  onClick={() => toggleKey(key)}
-                  className={`px-3 py-1.5 rounded-lg text-xs ${
-                    key.active
-                      ? "bg-green-600 hover:bg-green-700"
-                      : "bg-red-600 hover:bg-red-700"
-                  }`}
-                >
-                  {key.active ? "Active" : "Deactivated"}
-                </button>
+              <div className="mt-4 border-t border-white/10 pt-4">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <h3 className="text-sm font-semibold">API Key</h3>
+                  <button
+                    onClick={() => toggleRevealKey(key.id)}
+                    disabled={!key.apiKey}
+                    className="rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {revealedKeys[key.id] ? "Hide" : "Show"}
+                  </button>
+                </div>
 
-                <button
-                  onClick={() => deleteKey(key.id)}
-                  className="px-3 py-1.5 rounded-lg text-xs bg-gray-700 hover:bg-gray-800"
-                >
-                  Delete
-                </button>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <p className={`min-w-0 font-mono break-all text-sm ${key.apiKey ? "text-gray-100" : "text-gray-500"}`}>
+                    {revealedKeys[key.id] ? key.apiKey : maskKey(key.apiKey)}
+                  </p>
+                  <button
+                    onClick={() => copyApiKey(key.apiKey, key.id)}
+                    disabled={!key.apiKey}
+                    className="shrink-0 rounded-md bg-gray-700 px-3 py-1.5 text-xs font-medium hover:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {copiedKeyId === key.id ? "Copied" : "Copy"}
+                  </button>
+                </div>
               </div>
             </div>
           ))}

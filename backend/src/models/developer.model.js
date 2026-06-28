@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const apiKeySchema = new mongoose.Schema({
   keyHash: { type: String, required: true },
+  key: { type: String },
   name: { type: String, required: true, trim: true },
   active: { type: Boolean, default: true }
 },{timestamps:true});

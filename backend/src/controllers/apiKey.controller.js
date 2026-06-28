@@ -5,6 +5,7 @@ import { getLimits } from "../core/LimitProvider.js";
 const serializeApiKey = (apiKey) => ({
     id: apiKey.id || apiKey._id,
     name: apiKey.name,
+    apiKey: apiKey.key,
     active: apiKey.active,
     createdAt: apiKey.createdAt,
     updatedAt: apiKey.updatedAt
@@ -40,6 +41,7 @@ export const apiKeyController = async (req, res) => {
 
         dev.apiKeys.push({
             keyHash: hashedKey,
+            key: rawKey,
             name: keyName,
             active: true
         });
