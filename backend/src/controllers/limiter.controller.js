@@ -2,11 +2,12 @@ import { Developer } from "../models/developer.model.js";
 import { hashKey } from "../utils/hashKey.js";
 import { applyRateLimit } from "../core/rateLimiter.js";
 import { RequestLog } from "../models/RequestLog.model.js";
+import { getClientIp } from "../utils/clientIp.js";
 
 export const checkLimit = async (req, res) => {
     try {
         const apiKey = req.headers['x-api-key'];
-        const ip = req.headers['x-forwarded-for']?.split(",")[0] || req.ip;
+        const ip = getClientIp(req);
         const { reqCost } = req.body;
         const requestedCost = Number(reqCost);
 
