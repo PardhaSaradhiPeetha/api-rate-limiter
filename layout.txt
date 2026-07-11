@@ -1,15 +1,15 @@
 --------------------------------------------------
-🚀 HEADER
+HEADER
 --------------------------------------------------
 
-📊 METRICS (Cards)
+METRICS (Cards)
 
-📈 TRAFFIC GRAPH
+TRAFFIC GRAPH
 
-🚫 BLOCKED IPs   |   👥 ACTIVE USERS
+BLOCKED IPs   |  ACTIVE USERS
 
-⚙️ SYSTEM INFO
+SYSTEM INFO
 
-🔘 CONTROLS
+CONTROLS
 --------------------------------------------------
 
