@@ -13,14 +13,6 @@ export default function Landing() {
           all with a simple API.
         </p>
 
-        <div className="mt-10 flex justify-center gap-4">
-          <a
-            href="/signup"
-            className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-semibold transition"
-          >
-            Get Started
-          </a>
-        </div>
       </div>
 
       {/* FEATURES */}
