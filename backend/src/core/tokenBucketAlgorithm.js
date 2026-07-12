@@ -1,47 +1,52 @@
 import redis from "../config/redis.config.js";
 
-export const tokenBucket = async (key, capacity, refillRate, cost) => {
-    let currTime = Date.now();
+export const tokenBucket = async (key, capacity, refillRate, cost = 1) => {
+    const now = Date.now();
 
-    const data = await redis.get(key);
-    let tokens = capacity;
-    let lastRefill = currTime;
+    const ttl = Math.ceil(capacity / refillRate);
 
-    if (data) {
-        const parsed = JSON.parse(data);
-        tokens = parsed.tokens;
-        lastRefill = parsed.lastRefill;
+    let bucket = await redis.get(key);
 
-        const timePassed = (currTime - lastRefill) / 1000;
-        const refill = timePassed * refillRate;
-
-        tokens = Math.min(capacity, tokens + refill);
-    }
-
-    if (tokens < cost) {
-        return {
-            allowed: false,
-            remaining: Math.floor(tokens)
+    if (bucket) {
+        bucket = JSON.parse(bucket);
+    } else {
+        bucket = {
+            tokens: capacity,
+            lastRefill: now
         };
     }
 
-    tokens = tokens - cost;
+    const elapsed = (now - bucket.lastRefill) / 1000;
 
-    await redis.set(
-        key,
-        JSON.stringify({
-            tokens,
-            lastRefill: currTime
-        }),
-        {
-            EX: Math.ceil(capacity / refillRate)
-        }
-    )
+    bucket.tokens = Math.min(
+        capacity,
+        bucket.tokens + elapsed * refillRate
+    );
 
+    bucket.lastRefill = now;
+
+    if (bucket.tokens < cost) {
+
+        await redis.multi()
+            .set(key, JSON.stringify(bucket))
+            .expire(key, ttl)   
+            .exec();
+
+        return {
+            allowed: false,
+            remaining: Math.floor(bucket.tokens)
+        };
+    }
+
+    bucket.tokens -= cost;
+
+    await redis.multi()
+        .set(key, JSON.stringify(bucket))
+        .expire(key, ttl)
+        .exec();
 
     return {
         allowed: true,
-        remaining: Math.floor(tokens)
-    }
+        remaining: Math.floor(bucket.tokens)
+    };
 };
-
