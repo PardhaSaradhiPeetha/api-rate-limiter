@@ -2,7 +2,7 @@ const PLAN_LIMITS = {
     free: {
         maxApiKeys: 5,
         capacity: 50,
-        timeWindow: 60,
+        timeWindow: 600,
         maxCost: 5
     }
 };
